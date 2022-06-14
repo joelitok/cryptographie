@@ -9,13 +9,18 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
+import java.security.cert.Certificate;
 import java.security.spec.X509EncodedKeySpec;
+import java.io.FileInputStream;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 
@@ -128,6 +133,30 @@ public class CryptoUtilImpl {
         byte[] decodedEncryptedData = decodeFromBase64(dataBase64);
         byte[] decryptedData = cipher.doFinal(decodedEncryptedData);
         return decryptedData;
+    }
+
+    public PublicKey publicKeyFromCertificate(String fileName) throws Exception{
+        FileInputStream fileInputStream = new FileInputStream(fileName);
+        CertificateFactory certificateFactory =CertificateFactory.getInstance("X.509");
+        Certificate certificate =certificateFactory.generateCertificate(fileInputStream);
+        
+        System.out.println("==========================");
+        System.out.println(certificate.toString());
+        System.out.println("==========================");
+        return certificate.getPublicKey();
+    }
+
+
+
+    public PrivateKey privateKeyFromJKS(String  fileName, String jksPassWord, String alias) throws Exception {
+
+        FileInputStream fileInputStream = new FileInputStream(fileName);
+        KeyStore keyStore =KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(fileInputStream, jksPassWord.toCharArray());
+        Key key = keyStore.getKey(alias, jksPassWord.toCharArray());
+        PrivateKey privateKey =(PrivateKey) key;
+        return privateKey;
+
     }
 
 }
