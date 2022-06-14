@@ -48,7 +48,7 @@ System.out.println(new String(encodedSecretKey));
 System.out.println("=======================================");
 
 
-String data ="My Data..... ....";
+String data ="My Data.........";
 //String secret="azerty_azerty_az";
 
 String secret =new String(Base64.getDecoder().decode(encodedSecretKey));
